@@ -72,6 +72,13 @@ export interface UseMenuProps
    */
   closeOnBlur?: boolean
   /**
+   * If `true`, clicking outside the menu to close will
+   * not propagate click event further below
+   *
+   * @default false
+   */
+  closeOnDeadClick?: boolean
+  /**
    * If `true`, the first enabled menu item will receive focus and be selected
    * when the menu opens.
    *
@@ -139,6 +146,7 @@ export function useMenu(props: UseMenuProps = {}) {
     id,
     closeOnSelect = true,
     closeOnBlur = true,
+    closeOnDeadClick = false,
     autoSelect = true,
     isLazy,
     isOpen: isOpenProp,
@@ -206,6 +214,9 @@ export function useMenu(props: UseMenuProps = {}) {
     handler: (event) => {
       if (!buttonRef.current?.contains(event.target as HTMLElement)) {
         onClose()
+        if (closeOnDeadClick) {
+          event.stopPropagation()
+        }
       }
     },
   })
